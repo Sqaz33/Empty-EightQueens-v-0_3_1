@@ -43,26 +43,27 @@ public class Queen {
     * @return признак того, что позиция найдена
     */
     public boolean findNewAcceptablePosition() {
+        boolean isFind = false;
+
         // Ищем позицию собственными силами...
         // Пока позиция не найдена и не вышли за пределы доски
-        ++pos.y;
-        while (pos.y < 9 && (neighbor != null && neighbor.canAttack(pos.x, pos.y))) {
+        while (!isFind && pos.y <= Desk.rowCount()) {
             // Делаем шаг "вверх"
-            ++pos.y;
+            pos.y++;
+            isFind = pos.y <= Desk.rowCount() && (neighbor == null || !neighbor.canAttack(pos.x, pos.y));
         }
 
         // Если не удалось найти позицию собственными силами
-        if (pos.y > 8 || (neighbor != null && neighbor.canAttack(pos.x, pos.y))) {
+        if (!isFind) {
             // Просим соседа слева найти приемлемую позицию для себя, если он имеется
             if (neighbor != null && neighbor.findNewAcceptablePosition()) {
                 // Переходим в позицию под доской и снова ищем собственную позицию, если сосед нашел новую позицию
-                pos.y = 0;
-                return findNewAcceptablePosition();
+                pos.y = Desk.rowBelowDesk();
+                isFind = findNewAcceptablePosition();
             }
-            return  false;
-        } else {
-            return true;
+
         }
+        return isFind;
     }
     
     
